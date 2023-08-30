@@ -1,0 +1,78 @@
+type Query {
+    alerts(match: SearchAlertInput): [Alert!]!
+    alert(id: ID!): Alert
+    metrics: [Metric!]!
+    metricData(metric: ID!, start: Date, end: Date): [MetricData!]!
+}
+
+type Mutation {
+    createMetric(name: String!, description: String!, type: metricType!): Metric!
+    createMetricData(metric: ID!, value: Float!): MetricData!
+    createAlert(alert: CreateAlertInput!): Alert!
+}
+
+type Alert {
+    id: ID!
+    message: String!
+    loud: Boolean! = false
+    severity: Severity!
+	description: String!
+	claimedBy: User
+	source: String
+    metric: Metric!
+	dismissed: Boolean! = false
+    createdAt: Date!
+    updatedAt: Date!
+}
+
+type CreateAlertInput {
+    message: String!
+    loud: Boolean! = false
+    severity: Severity! = low
+    description: String!
+    claimedBy: Int
+    source: String
+}
+
+type SearchAlertInput {
+    message: String
+    loud: Boolean
+    severity: Severity
+    description: String
+    claimedBy: User
+    source: String
+}
+
+type Metric {
+    id: ID!
+    name: String!
+    description: String!
+    data: [MetricData!]!
+    createdAt: String!
+    updatedAt: String!
+}
+
+type MetricData {
+    id: ID!
+    value: Float!
+    metric: Metric!
+    createdAt: Date!
+}
+
+type User {
+    id: ID!
+    firstName: String
+    lastName: String
+    email: String!
+    claimedAlerts: [Alert!]!
+    createdAt: Date!
+    updatedAt: Date!
+}
+
+enum Severity {
+    low
+    medium
+    high
+}
+
+scalar Date
