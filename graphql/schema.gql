@@ -2,10 +2,12 @@ type Query {
     alerts(match: SearchAlertInput): [Alert!]!
     alert(id: ID!): Alert
     metrics: [Metric!]!
-    metricData(metric: ID!, start: Date, end: Date): [MetricData!]!
+    metric(name: String!): Metric
+    metricData(metric: String!, start: Date, end: Date): [MetricData!]!
 }
 
 type Mutation {
+    createUser(firstName: String, lastName: String, email: String!): User! # Will likely be removed once we integrate with nexus auth
     createMetric(name: String!, description: String!, type: metricType!): Metric!
     createMetricData(metric: ID!, value: Float!): MetricData!
     createAlert(alert: CreateAlertInput!): Alert!
@@ -30,7 +32,7 @@ type CreateAlertInput {
     loud: Boolean! = false
     severity: Severity! = low
     description: String!
-    claimedBy: Int
+    claimedBy: ID
     source: String
 }
 
@@ -39,12 +41,11 @@ type SearchAlertInput {
     loud: Boolean
     severity: Severity
     description: String
-    claimedBy: User
+    claimedBy: ID
     source: String
 }
 
 type Metric {
-    id: ID!
     name: String!
     description: String!
     data: [MetricData!]!
@@ -53,7 +54,6 @@ type Metric {
 }
 
 type MetricData {
-    id: ID!
     value: Float!
     metric: Metric!
     createdAt: Date!
